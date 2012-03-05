@@ -590,16 +590,26 @@ module Bitcoin
 			@transactions[transaction_id] ||= Transaction.new(self, transaction_id)
 		end
 
-		# Get an Array of every Transaction that has occurred since +block+. If
-		# +block+ is not a Block it will be converted into one with get_block().
-		def get_transactions_since(block)
+		# Call the (Ruby) block passed for every transaction that has occurred since
+		# +block+ (which may be a Block, a block ID, or a block height). We return
+		# the last Block processed.
+		def each_transactions_since(block)
 			unless block.is_a?(Block)
 				block = get_block(block)
 			end
 
-			@jr.listsinceblock(block.block_id).fetch('transactions').map do |tx|
-				tx.fetch('txid')
-			end.uniq.map(&method(:get_transaction))
+			info = @jr.listsinceblock(block.block_id)
+
+			txes = info.fetch('transactions')
+			txes.map!{ |tx| tx.fetch('txid') }
+			txes.uniq!
+
+			txes.each do |txid|
+				transaction = get_transaction(txid)
+				yield(transaction)
+			end
+
+			get_block(info.fetch('lastblock'))
 		end
 
 		# Get an Array of every Transaction involving one of our addresses.
