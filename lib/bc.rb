@@ -108,7 +108,7 @@ module Bitcoin
 		# It increases logarithmically in proportion to difficulty.
 		attr_reader :difficulty
 
-		# This is an Array of every Transaction  that is part of the block.
+		# This is an Array of every Transaction that is part of the block.
 		attr_reader :transactions
 
 		# This is a compact representation of the prefix this block was attempting
@@ -156,6 +156,8 @@ module Bitcoin
 					block_data[block_data_key.to_s].freeze
 				)
 			end
+
+			@transactions ||= [].freeze
 		end
 
 		# This is the Block created immediately after this one, or +nil+ if this is
