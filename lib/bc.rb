@@ -590,7 +590,7 @@ module Bitcoin
 		# Call the (Ruby) block passed for every transaction that has occurred since
 		# +block+ (which may be a Block, a block ID, or a block height). We return
 		# the last Block processed.
-		def each_transactions_since(block)
+		def each_transaction_since(block)
 			unless block.is_a?(Block)
 				block = get_block(block)
 			end
@@ -613,7 +613,7 @@ module Bitcoin
 		def transactions
 			transactions = Array.new
 
-			each_transactions_since(0) do |tx|
+			each_transaction_since(0) do |tx|
 				transactions << tx
 			end
 
