@@ -611,7 +611,13 @@ module Bitcoin
 
 		# Get an Array of every Transaction involving one of our addresses.
 		def transactions
-			get_transactions_since(0)
+			transactions = Array.new
+
+			each_transactions_since(0) do |tx|
+				transactions << tx
+			end
+
+			transactions
 		end
 
 		# This is the latest Block we've processed.
