@@ -584,9 +584,6 @@ module Bitcoin
 		# UnknownTransaction if we don't know about a Transaction with that ID.
 		# The result of this function is cached.
 		def get_transaction(transaction_id)
-			if transaction_id.is_a?(Fixnum)
-			end
-
 			@transactions[transaction_id] ||= Transaction.new(self, transaction_id)
 		end
 
