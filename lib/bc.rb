@@ -79,6 +79,14 @@ module Bitcoin
 		end
 	end
 
+	# EmptyKeypool is raised when the Bitcoin keypool is empty, but the wallet is
+	# locked. Call refill_key_pool() on the Bitcoin::Client instance to refill it.
+	class EmptyKeypool < Error
+		def initialize()
+			super('The Bitcoin key pool ran out.')
+		end
+	end
+
 	# This class represents a block in the Bitcoin block chain. (c.f.
 	# https://en.bitcoin.it/wiki/Block and
 	# https://en.bitcoin.it/wiki/Block_hashing_algorithm)
@@ -320,12 +328,28 @@ module Bitcoin
 		# Get an unused Address associated with this account, or create one if one
 		# doesn't already exist.
 		def unused_address
-			@bc.get_address(@bc.jr.getaccountaddress(@name))
+			begin
+				@bc.get_address(@bc.jr.getaccountaddress(@name))
+			rescue Jr::ServerError => ex
+				if ex.code == -12
+					raise EmptyKeypool
+				else
+					raise
+				end
+			end
 		end
 
 		# Get a new Address associated with this account.
 		def new_address
-			@bc.get_address(@bc.jr.getnewaddress(@name))
+			begin
+				@bc.get_address(@bc.jr.getnewaddress(@name))
+			rescue Jr::ServerError => ex
+				if ex.code == -12
+					raise EmptyKeypool
+				else
+					raise
+				end
+			end
 		end
 
 		# Send +amount+ Bitcoin to +dest+. +amount+ should be a positive real
