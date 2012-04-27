@@ -660,6 +660,13 @@ module Bitcoin
 			con.get((testnet? ? '/testnet' : '') + '/q/getblockcount').body.to_i
 		end
 
+		# Return the percent of the blockchain we have downloaded according to the
+		# number fetched by latest_remote_block_height(). The warnings there apply
+		# here, too.
+		def percent_complete
+			(latest_block.height / latest_remote_block_height) * 100
+		end
+
 		# Send +amount+ Bitcoin to +dest+. +amount+ should be a positive real
 		# number; +dest+ can either be a String bitcoin address, or an Address
 		# instance. We return a Transaction.
