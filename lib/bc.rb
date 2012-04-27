@@ -7,7 +7,7 @@ require 'jr'
 # This redefines Float() so that JSON floats will be returned as BigDecimals.
 # This is neccessary because bitcoind returns Floats that are actually decimals
 # with a precision of 8. FUCK YOU, bitcoind.
-class JSON::Pure::Parser
+class JSON::BigDecimalParser < JSON::Pure::Parser
 	private
 
 	def Float(num)
@@ -15,8 +15,14 @@ class JSON::Pure::Parser
 	end
 end
 
-JSON.send(:remove_const, :Parser)
-JSON::Parser = JSON::Pure::Parser
+# This is like Jr::Jr, but instead of Floats, we use BigDecimals.
+class Jr::BigDecimalJr < Jr::Jr
+	private
+
+	def parse_json_data(data)
+		JSON::BigDecimalParser.new(data).parse()
+	end
+end
 
 module Bitcoin
 	# Errors that the bitcoind is expected to raise should derive from this class.
@@ -560,7 +566,7 @@ module Bitcoin
 				instance_variable_set("@#{var}", eval(var))
 			end
 
-			@jr = Jr::Jr.new(@host, @port, @user, @password, ssl)
+			@jr = Jr::BigDecimalJr.new(@host, @port, @user, @password, ssl)
 
 			@accounts = Hash.new
 			@addresses = Hash.new
