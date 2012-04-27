@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'bc'
-  s.version     = '0.1.2'
+  s.version     = '0.2.0'
   s.author      = 'katmagic'
   s.email       = 'the.magical.kat@gmail.com'
   s.homepage    = 'https://github.com/katmagic/bc'
