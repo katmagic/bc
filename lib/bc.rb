@@ -1,4 +1,5 @@
 # encoding: utf-8
+require 'bigdecimal'
 require 'json/pure'
 require 'net/http'
 require 'jr'
