@@ -1,4 +1,5 @@
 # encoding: utf-8
+require 'net/http'
 require 'jr'
 
 module Bitcoin
@@ -647,6 +648,16 @@ module Bitcoin
 		# This is the latest Block we've processed.
 		def latest_block
 			get_block( @jr.getinfo().fetch('blocks') )
+		end
+
+		# This returns the height of the last processed block according to
+		# blockexplorer.com. Be cautious—this information is provided by a third
+		# party! This method may raise exceptions of numerous different types.
+		def latest_remote_block_height
+			con = Net::HTTP.new('blockexplorer.com', 443)
+			con.use_ssl = true
+
+			con.get((testnet? ? '/testnet' : '') + '/q/getblockcount').body.to_i
 		end
 
 		# Send +amount+ Bitcoin to +dest+. +amount+ should be a positive real
