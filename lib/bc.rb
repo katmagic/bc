@@ -1,6 +1,21 @@
 # encoding: utf-8
+require 'json/pure'
 require 'net/http'
 require 'jr'
+
+# This redefines Float() so that JSON floats will be returned as BigDecimals.
+# This is neccessary because bitcoind returns Floats that are actually decimals
+# with a precision of 8. FUCK YOU, bitcoind.
+class JSON::Pure::Parser
+	private
+
+	def Float(num)
+		BigDecimal(num)
+	end
+end
+
+JSON.send(:remove_const, :Parser)
+JSON::Parser = JSON::Pure::Parser
 
 module Bitcoin
 	# Errors that the bitcoind is expected to raise should derive from this class.
@@ -858,7 +873,7 @@ module Bitcoin
 		# Set the transaction fee to +fee+. (c.f.
 		# https://en.bitcoin.it/wiki/Transaction_fees)
 		def transaction_fee=(fee)
-			fee = fee.to_f
+			fee = fee.to_d
 			@jr.settxfee(fee)
 			fee
 		end
