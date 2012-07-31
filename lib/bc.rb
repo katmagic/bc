@@ -337,10 +337,9 @@ module Bitcoin
 			end
 		end
 
-		# Fetch the balance of this account. Only deposits with at least
-		# +minimum_confirmations+ will be included in this total.
-		def balance(minimum_confirmations=1)
-			@bc.jr.getbalance(@name, minimum_confirmations)
+		# Fetch the balance of this account.
+		def balance
+			@bc.jr.getbalance(@name)
 		end
 
 		# This is an Array of every Address associated with this account.
